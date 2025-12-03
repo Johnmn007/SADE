@@ -34,3 +34,7 @@ desktop.ini
 
 # Archivos de migraciones generados por Flask-Migrate
 migrations/
+
+app/static/reports/*
+!app/static/reports/.gitkeep
+
