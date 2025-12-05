@@ -19,11 +19,20 @@ class DevelopmentConfig(Config):
 
 
 class ProductionConfig(Config):
-    SECRET_KEY = os.getenv("PROD_SECRET_KEY", "fallback_prod_secret")
-    SQLALCHEMY_DATABASE_URI = (
-        f"postgresql+psycopg2://{os.getenv('PROD_DB_USER')}:{os.getenv('PROD_DB_PASSWORD')}"
-        f"@{os.getenv('PROD_DB_HOST')}:{os.getenv('PROD_DB_PORT', '5432')}/{os.getenv('PROD_DB_NAME')}"
-    )
+    SECRET_KEY = os.getenv("SECRET_KEY", "fallback_prod_secret")
+    
+    # OPCIÓN A: Para Render/Heroku y similares que proveen DATABASE_URL
+    database_url = os.getenv("DATABASE_URL")
+    if database_url:
+        # Convertir de postgres:// a postgresql:// que es lo que SQLAlchemy necesita
+        SQLALCHEMY_DATABASE_URI = database_url.replace("postgres://", "postgresql://")
+    else:
+        # OPCIÓN B: Para otros servicios o desarrollo (manteniendo compatibilidad)
+        SQLALCHEMY_DATABASE_URI = (
+            f"postgresql+psycopg2://{os.getenv('PROD_DB_USER')}:{os.getenv('PROD_DB_PASSWORD')}"
+            f"@{os.getenv('PROD_DB_HOST')}:{os.getenv('PROD_DB_PORT', '5432')}/{os.getenv('PROD_DB_NAME')}"
+        )
+    
     DEBUG = False
 
 
